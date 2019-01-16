@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Club Equitation</string>
+    <string name="sign_in">sign in</string>
+    <string name="error_sign_in">Failed to Sign In</string>
+    <string name="login">login</string>
+    <string name="password">password</string>
+    <string name="app_label">equitation maroc</string>
+
+    <string name="key_pref_login">loginKey</string>
+    <string name="key_pref_password">passwordKey</string>
+
+    <string name="admin_title">Administrateur</string>
+    <string name="emploi">Emploi</string>
+    <string name="admin_jobs">Jobs</string>
+    <string name="admin_users">Utilisateurs</string>
+    <string name="deconnexion">Deconnexion</string>
+</resources>
