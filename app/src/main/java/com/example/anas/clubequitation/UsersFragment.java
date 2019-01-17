@@ -34,7 +34,7 @@ import java.util.Random;
 public class UsersFragment extends Fragment {
 
     public static final String DATA = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    public static final String URL = "http://192.168.100.42/equitation/add_user.php/";
+    public static final String URL = EquitationService.BASE_URL+"equitation/add_user.php/";
     private static final String TAG = "UsersFragmentTAG";
     private SharedPreferences sharedPreferences;
     private Button generatorButton;

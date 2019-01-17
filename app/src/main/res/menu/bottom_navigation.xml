@@ -12,6 +12,11 @@
     </item>
 
     <item
+        android:id="@+id/nav_affectation"
+        android:title="@string/affectation">
+    </item>
+
+    <item
         android:id="@+id/nav_emploi"
         android:title="@string/emploi">
     </item>

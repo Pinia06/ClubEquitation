@@ -1,5 +1,6 @@
 package com.example.anas.clubequitation;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -10,10 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.NumberPicker;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -32,6 +35,7 @@ import org.json.JSONObject;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -41,28 +45,31 @@ import java.util.TimeZone;
 public class JobsFragment extends Fragment {
 
     private static final String TAG = "JobsFragmentTAG";
-    public static final String URL = "http://192.168.100.42/equitation/add_job.php/";
+    public static final String URL = EquitationService.BASE_URL+"equitation/add_job.php/";
 
-    private List<String> daysArray = new ArrayList<>();
     private List<String> hoursArray = new ArrayList<>();
     private List<String> minutesArray = new ArrayList<>();
     private List<String> typeArray = new ArrayList<>();
 
     private Spinner moniteurSpinner;
-    private Spinner jourSpinner;
     private Spinner heureSpinner;
     private Spinner minuteSpinner;
     private Spinner typeSpinner;
     private EditText nomEditText;
     private NumberPicker dureeNumberPicker;
+    private NumberPicker repetitionNumberPicker;
+    private TextView dateDebutTextView;
+    private Button pickDateButton;
+    private Date dateDebut;
+    private Date dateFin;
 
     private Button addJobButton;
     private ProgressBar progressBar;
 
     private String nom;
-    private String jour;
     private String heureDebut;
     private int duree;
+    private int repetition;
     private String heureFin;
     private String type;
     private String NM;
@@ -83,21 +90,22 @@ public class JobsFragment extends Fragment {
         nomEditText = view.findViewById(R.id.et_nom_jobs);
         progressBar = view.findViewById(R.id.pb_add_job);
         addJobButton = view.findViewById(R.id.bt_add_job);
-        dureeNumberPicker = view.findViewById(R.id.np_duree);
+        dateDebutTextView = view.findViewById(R.id.tv_date);
+        pickDateButton = view.findViewById(R.id.bt_pick_date);
 
         moniteurSpinner = view.findViewById(R.id.sp_moniteur);
-        jourSpinner = view.findViewById(R.id.sp_jour);
         heureSpinner = view.findViewById(R.id.sp_heure);
         minuteSpinner = view.findViewById(R.id.sp_minute);
         typeSpinner = view.findViewById(R.id.sp_type);
 
         fillMoniteurSpinner();
 
-        fillJourSpinner();
         fillHeureSpinner();
         fillMinuteSpinner();
         fillTypeSpinner();
 
+        repetitionNumberPicker = view.findViewById(R.id.np_repetition);
+        fillRepetitionNumberPicker();
         dureeNumberPicker = view.findViewById(R.id.np_duree);
         fillDureeNumberPicker();
 
@@ -107,6 +115,32 @@ public class JobsFragment extends Fragment {
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
 
+        pickDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar c = Calendar.getInstance();
+                int year = c.get(Calendar.YEAR);
+                int month = c.get(Calendar.MONTH);
+                int day = c.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dialog = new DatePickerDialog(getContext(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        String selectedDate = dayOfMonth + "/" + month+1 + "/" + year;
+                        try {
+                            dateDebut = new SimpleDateFormat("dd/MM/yyyy").parse(selectedDate);
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        dateDebutTextView.setText(selectedDate);
+                    }
+                }, year, month, day);
+
+                dialog.show();
+            }
+        });
+
         addJobButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -115,10 +149,15 @@ public class JobsFragment extends Fragment {
                 RequestQueue queue = Volley.newRequestQueue(getContext());
 
                 nom = nomEditText.getText().toString();
-                jour = jourSpinner.getSelectedItem().toString();
                 type = typeSpinner.getSelectedItem().toString();
                 duree = dureeNumberPicker.getValue();
                 NM = moniteurSpinner.getSelectedItem().toString();
+                repetition = repetitionNumberPicker.getValue();
+
+                Calendar c = Calendar.getInstance();
+                c.setTime(dateDebut);
+                c.add(Calendar.DATE,repetition*7);
+                dateFin = c.getTime();
 
                 heureDebut = heureSpinner.getSelectedItem().toString() + ":" + minuteSpinner.getSelectedItem().toString() + ":00";
                 Log.d(TAG,heureDebut);
@@ -156,7 +195,9 @@ public class JobsFragment extends Fragment {
                     protected Map<String, String> getParams() throws AuthFailureError {
                         Map<String, String> params = new HashMap<String, String>();
                         params.put("nom", nom);
-                        params.put("jour", jour);
+                        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("dd/MM/yyyy");
+                        params.put("dateDebut",simpleDateFormat.format(dateDebut));
+                        params.put("dateFin",simpleDateFormat.format(dateFin));
                         params.put("heureDebut", heureDebut);
                         params.put("heureFin", heureFin);
                         params.put("type", type);
@@ -173,19 +214,6 @@ public class JobsFragment extends Fragment {
             }
         });
 
-    }
-
-    private void fillJourSpinner() {
-        daysArray.add("Lundi");
-        daysArray.add("Mardi");
-        daysArray.add("Mercredi");
-        daysArray.add("Jeudi");
-        daysArray.add("Vendredi");
-        daysArray.add("Samedi");
-        daysArray.add("Dimanche");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getContext(),android.R.layout.simple_spinner_dropdown_item,daysArray);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        jourSpinner.setAdapter(adapter);
     }
 
     private void fillHeureSpinner() {
@@ -216,6 +244,12 @@ public class JobsFragment extends Fragment {
         typeSpinner.setAdapter(adapter);
     }
 
+    private void fillRepetitionNumberPicker(){
+        repetitionNumberPicker.setMaxValue(100);
+        repetitionNumberPicker.setMinValue(0);
+        repetitionNumberPicker.setWrapSelectorWheel(true);
+    }
+
     private void fillDureeNumberPicker(){
         dureeNumberPicker.setMaxValue(180);
         dureeNumberPicker.setMinValue(5);
@@ -238,7 +272,7 @@ public class JobsFragment extends Fragment {
     public void fillMoniteurSpinner(){
         RequestQueue queue = Volley.newRequestQueue(getContext());
 
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest("http://192.168.100.42/equitation/get_moniteur.php/", new Response.Listener<JSONArray>() {
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(EquitationService.BASE_URL+"equitation/get_salarie.php/", new Response.Listener<JSONArray>() {
             @Override
             public void onResponse(JSONArray response) {
                 Log.d(TAG,"ONRESPONSE");

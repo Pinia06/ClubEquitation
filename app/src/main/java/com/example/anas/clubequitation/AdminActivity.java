@@ -58,6 +58,10 @@ public class AdminActivity extends AppCompatActivity {
                         break;
                     case R.id.nav_Jobs : selectedFragment = new JobsFragment();
                         break;
+                    case R.id.nav_affectation : selectedFragment = new AffectationFragment();
+                        break;
+                    case R.id.nav_emploi : selectedFragment = new AdminEmploiFragment();
+                        break;
                 }
 
                 getSupportFragmentManager().beginTransaction().replace(R.id.fl_fragment_container,selectedFragment).commit();

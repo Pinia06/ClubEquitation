@@ -39,7 +39,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Moniteur : "
+                android:text="Salarie : "
                 />
             <Spinner
                 android:id="@+id/sp_moniteur"
@@ -53,20 +53,52 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:weightSum="4"
+            >
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Date debut : "
+                />
+
+            <TextView
+                android:id="@+id/tv_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="2"
+                android:textAlignment="center"
+                />
+
+            <Button
+                android:id="@+id/bt_pick_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="D"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
             android:weightSum="3"
             >
             <TextView
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="Jour : "
+                android:text="Repetition : "
                 />
-            <Spinner
-                android:id="@+id/sp_jour"
+            <NumberPicker
+                android:id="@+id/np_repetition"
                 android:layout_width="0dp"
                 android:layout_weight="2"
-                android:layout_height="wrap_content">
-            </Spinner>
+                android:layout_height="wrap_content"
+                android:descendantFocusability="blocksDescendants"
+                >
+            </NumberPicker>
 
         </LinearLayout>
 
@@ -199,6 +231,7 @@
                     android:background="@color/colorPrimaryDark"
                     android:text="Ajouter"
                     android:textColor="@android:color/white"
+                    android:layout_marginBottom="16dp"
                     />
 
             </FrameLayout>

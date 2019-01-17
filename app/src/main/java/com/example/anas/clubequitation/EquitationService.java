@@ -7,7 +7,7 @@ import retrofit2.http.GET;
 
 public interface EquitationService {
 
-    String BASE_URL = "http://192.168.100.42/";
+    String BASE_URL = "http://192.168.1.11/";
 
     @GET("equitation/login.php")
     Call<List<Personne>> getPersonne();
